@@ -139,49 +139,4 @@ document.getElementById('empId').addEventListener('keydown', function(e) { if (e
 document.getElementById('joinDate').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
 </script>
 </body>
-</html><!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>超尊科技 員工通訊錄查詢</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Microsoft JhengHei","PingFang TC",sans-serif;background:#F1EFE8;padding:24px 16px;color:#2C2C2A}.card{max-width:520px;margin:0 auto;background:#FFF;border-radius:12px;border:1px solid #E0DFD8;padding:24px}h1{font-size:18px;font-weight:500;margin-bottom:20px;color:#1A1A18}label{display:block;font-size:13px;color:#5F5E5A;margin-bottom:4px}input,select{width:100%;height:40px;border:1px solid #D3D1C7;border-radius:8px;padding:0 12px;font-size:14px;margin-bottom:14px}button{height:42px;border:none;border-radius:8px;background:#185FA5;color:#fff;font-size:15px;cursor:pointer}button:hover{background:#0C447C}.btn-full{width:100%}.error-msg{color:#A32D2D;font-size:13px;margin:-6px 0 12px;display:none}.hidden{display:none}.search-row{display:flex;gap:8px;margin-bottom:8px}.search-row input{margin-bottom:0}.search-row button{width:90px;flex-shrink:0}.result-card{background:#F7F6F1;border:1px solid #E0DFD8;border-radius:12px;padding:16px;margin-bottom:12px}.result-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}.avatar{width:40px;height:40px;border-radius:50%;background:#D6E4F0;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;color:#185FA5}.result-name{font-size:15px;font-weight:500}.result-sub{font-size:13px;color:#5F5E5A;margin-top:2px}.result-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-top:1px solid #E9E7DF}.result-label{color:#5F5E5A}.result-value{text-align:right;word-break:break-all}.hint{font-size:12px;color:#888780;margin-top:12px;text-align:center}.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.top-bar .who{font-size:13px;color:#5F5E5A}.top-bar a{font-size:13px;color:#185FA5;cursor:pointer;text-decoration:none}.loading{text-align:center;padding:20px;color:#888780;font-size:14px}
-</style>
-</head>
-<body>
-<div class="card" id="loginCard">
-<h1>超尊科技 員工通訊錄查詢</h1>
-<label for="empId">員工代號</label>
-<input type="text" id="empId" placeholder="例: SAT03032">
-<label for="joinDate">到職日(西元，例: 2024-07-01)</label>
-<input type="text" id="joinDate" placeholder="2024-07-01">
-<div class="error-msg" id="loginError"></div>
-<button class="btn-full" onclick="doLogin()">登入</button>
-</div>
-<div class="card hidden" id="queryCard">
-<div class="top-bar"><span class="who" id="whoLabel"></span><a onclick="logout()">登出</a></div>
-<h1>查詢通訊錄</h1>
-<div class="search-row"><input type="text" id="keyword" placeholder="輸入姓名/部門/員工編號"><button onclick="doSearch()">查詢</button></div>
-<select id="empSelect" onchange="onSelectEmployee()"><option value="">或選擇同事</option></select>
-<div class="error-msg" id="searchError"></div>
-<div id="resultArea"></div>
-<p class="hint">每次查詢會記錄查詢人員工代號與時間</p>
-</div>
-<script>
-var API_URL='https://script.google.com/macros/s/AKfycbzP0glR5uAR4cunkFumKQCPeDJm-K6xgGAUyfIIW7dxchg22ia4hMk0ALdnH6W-MTEa_w/exec';
-var session={empId:'',joinDate:'',name:''};
-function showError(i,m){var e=document.getElementById(i);e.textContent=m;e.style.display=m?'block':'none';}
-async function doLogin(){showError('loginError','');var empId=document.getElementById('empId').value.trim();var joinDate=document.getElementById('joinDate').value.trim();if(!empId||!joinDate){showError('loginError','請輸入員工代號與到職日');return;}try{document.querySelector('#loginCard button').textContent='登入中...';var url=API_URL+'?action=login&empId='+encodeURIComponent(empId)+'&joinDate='+encodeURIComponent(joinDate);var res=await fetch(url);var data=await res.json();document.querySelector('#loginCard button').textContent='登入';if(data.result!=='success'){showError('loginError',data.message||'登入失敗');return;}session={empId:data.empId,joinDate:joinDate,name:data.name};document.getElementById('loginCard').classList.add('hidden');document.getElementById('queryCard').classList.remove('hidden');document.getElementById('whoLabel').textContent=data.name+'('+data.empId+') 已登入';loadEmployeeList();}catch(ex){document.querySelector('#loginCard button').textContent='登入';showError('loginError','連線失敗，請稍後再試');}}
-function logout(){session={empId:'',joinDate:'',name:''};document.getElementById('queryCard').classList.add('hidden');document.getElementById('loginCard').classList.remove('hidden');document.getElementById('empId').value='';document.getElementById('joinDate').value='';document.getElementById('resultArea').innerHTML='';document.getElementById('keyword').value='';document.getElementById('empSelect').innerHTML='<option value="">或選擇同事</option>';}
-async function loadEmployeeList(){try{var url=API_URL+'?action=list&empId='+encodeURIComponent(session.empId)+'&joinDate='+encodeURIComponent(session.joinDate);var res=await fetch(url);var data=await res.json();if(data.result!=='success')return;var sel=document.getElementById('empSelect');data.list.forEach(function(p){var opt=document.createElement('option');opt.value=p.empId;opt.textContent=p.empId+' '+p.name;sel.appendChild(opt);});}catch(ex){}}
-function onSelectEmployee(){var empId=document.getElementById('empSelect').value;if(!empId)return;runSearch({targetEmpId:empId});}
-function doSearch(){var keyword=document.getElementById('keyword').value.trim();if(!keyword){showError('searchError','請輸入查詢關鍵字');return;}runSearch({keyword:keyword});}
-async function runSearch(params){showError('searchError','');document.getElementById('resultArea').innerHTML='<div class="loading">查詢中...</div>';try{var url=API_URL+'?action=search&empId='+encodeURIComponent(session.empId)+'&joinDate='+encodeURIComponent(session.joinDate);if(params.keyword)url+='&keyword='+encodeURIComponent(params.keyword);if(params.targetEmpId)url+='&targetEmpId='+encodeURIComponent(params.targetEmpId);var res=await fetch(url);var data=await res.json();if(data.result!=='success'){showError('searchError',data.message||'查詢失敗');document.getElementById('resultArea').innerHTML='';return;}renderResults(data.results);}catch(ex){showError('searchError','連線失敗，請稍後再試');document.getElementById('resultArea').innerHTML='';}}
-function renderResults(list){var area=document.getElementById('resultArea');if(!list||list.length===0){area.innerHTML='<p class="hint">查無符合的同仁</p>';return;}area.innerHTML=list.map(function(p){var phoneRows='';if(p.phones&&p.phones.length>0){p.phones.forEach(function(ph){var label=ph.office.replace('分機','');phoneRows+='<div class="result-row"><span class="result-label">'+label+'</span><span class="result-value">'+ph.tel+' #'+ph.ext+'</span></div>';});}else{phoneRows='<div class="result-row"><span class="result-label">公司電話</span><span class="result-value">無</span></div>';}var mobileRow=p.mobile?'<div class="result-row"><span class="result-label">公務機</span><span class="result-value">'+p.mobile+'</span></div>':'';var emailRow=p.email?'<div class="result-row"><span class="result-label">Email</span><span class="result-value">'+p.email+'</span></div>':'';var initial=p.name.charAt(0);return'<div class="result-card"><div class="result-header"><div class="avatar">'+initial+'</div><div><div class="result-name">'+p.name+'('+p.empId+')</div><div class="result-sub">'+p.dept+' - '+p.title+'</div></div></div>'+phoneRows+mobileRow+emailRow+'</div>';}).join('');}
-document.getElementById('keyword').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
-document.getElementById('empId').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('joinDate').focus();});
-document.getElementById('joinDate').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-</script>
-</body>
 </html>
