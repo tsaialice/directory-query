@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>h
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -69,7 +69,7 @@ async function doLogin() {
   showError('loginError', '');
   var empId = document.getElementById('empId').value.trim();
   var joinDate = document.getElementById('joinDate').value.trim();
-  if (!empId || !joinDate) { showError('loginError', '請輸入員工代號與到職日'); return; }
+  if (!empId || !joinDate) { showError('loginError', '請輸入員工代號與到職日'); return; }h
   try {
     document.querySelector('#loginCard button').textContent = '登入中...';
     var res = await fetch(API_URL + '?action=login&empId=' + encodeURIComponent(empId) + '&joinDate=' + encodeURIComponent(joinDate));
@@ -127,7 +127,7 @@ function renderResults(list) {
   area.innerHTML = list.map(function(p) {
     var initial = p.name ? p.name.charAt(0) : '?';
     var telValue = '';
-    if (p.phones && p.phones.length > 0) { telValue = p.phones.map(function(ph) { return ph.tel + ' #' + ph.ext; }).join('<br>'); }
+    if (p.phones && p.phones.length > 0) { telValue = p.phones.map(function(ph) { return ph.tel + (ph.ext ? ' #' + ph.ext : '（無分機）'); }).join('<br>'); }
     return '<div class="result-card">' +
       '<div class="result-header"><div class="avatar">' + initial + '</div><div><div class="result-name">' + p.name + '（' + p.empId + '）</div></div></div>' +
       row('公司名稱', p.company) + row('部門', p.dept) + row('職稱', p.title) + row('公司電話', telValue) + row('公務機', p.mobile) + row('Email', p.email) +
