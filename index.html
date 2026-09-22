@@ -32,7 +32,7 @@ button:hover { background: #0C447C; }
 .top-bar .who { font-size: 13px; color: #5F5E5A; }
 .top-bar a { font-size: 13px; color: #185FA5; cursor: pointer; text-decoration: none; }
 .loading { text-align: center; padding: 20px; color: #888780; font-size: 14px; }
-</style>
+/* v2 */</style>
 </head>
 <body>
 <div class="card" id="loginCard">
@@ -69,7 +69,7 @@ async function doLogin() {
   showError('loginError', '');
   var empId = document.getElementById('empId').value.trim();
   var joinDate = document.getElementById('joinDate').value.trim();
-  if (!empId || !joinDate) { showError('loginError', '請輸入員工代號與到職日'); return; }h
+  if (!empId || !joinDate) { showError('loginError', '請輸入員工代號與到職日'); return; }
   try {
     document.querySelector('#loginCard button').textContent = '登入中...';
     var res = await fetch(API_URL + '?action=login&empId=' + encodeURIComponent(empId) + '&joinDate=' + encodeURIComponent(joinDate));
@@ -117,7 +117,7 @@ async function runSearch(params) {
     renderResults(data.results);
   } catch (ex) { showError('searchError', '連線失敗，請稍後再試'); document.getElementById('resultArea').innerHTML = ''; }
 }
-function row(label, value) {
+function row(label, value) {h
   var isEmpty = !value;
   return '<div class="result-row"><span class="result-label">' + label + '</span><span class="result-value' + (isEmpty ? ' none' : '') + '">' + (isEmpty ? '無' : value) + '</span></div>';
 }
