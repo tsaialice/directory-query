@@ -75,7 +75,7 @@ async function doLogin() {
     var res = await fetch(API_URL + '?action=login&empId=' + encodeURIComponent(empId) + '&joinDate=' + encodeURIComponent(joinDate));
     var data = await res.json();
     document.querySelector('#loginCard button').textContent = '登入';
-    if (data.result !== 'success') { showError('loginError', data.message || '登入失敗'); return; }
+    if (!data.success && data.result !== 'success') { showError('loginError', data.message || '登入失敗'); return; }
     session = { empId: data.empId, joinDate: joinDate, name: data.name };
     document.getElementById('loginCard').classList.add('hidden');
     document.getElementById('queryCard').classList.remove('hidden');
